@@ -1,10 +1,6 @@
-using System;
-using System.Text;
 using Microsoft.Azure.EventHubs;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace GeoTracking.PositionEnricher
 {
@@ -25,7 +21,7 @@ namespace GeoTracking.PositionEnricher
         {
             //  var positionReport = JsonConvert.DeserializeObject<PositionReport>(Encoding.UTF8.GetString(eventData.Body.Array));
 
-            return new VesselGeoPosition(positionReport);
+            return new VesselGeoPosition(positionReport, NGeoHashAlgorithm.Default);
         }
     }
 }
