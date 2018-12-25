@@ -1,0 +1,197 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "allowedValues": [
+
+        "dev",
+        "stg",
+        "prd"
+
+      ]
+    }
+  },
+  "variables": {
+    "deployLocation": "[resourceGroup().location]",
+    "appInsightsName": "[concat('geotracking-ai-', parameters('environment'))]", 
+    "positionEnricherHostingPlanName": "[concat('geotracking-enricher-consplan-', parameters('environment'))]",
+    "positionEnricherStorageAccountName": "[concat('enricherstorage', parameters('environment'))]", 
+    "positionEnricherFunctionName": "[concat('geotracking-enricher-fx-', parameters('environment'))]", 
+    "geoTrackingEventHubNsName": "[concat('geotracking-evh-', parameters('environment'))]",
+    "positionReportEventHubName": "[concat('positionreport-', parameters('environment'))]", 
+    "appSvcConfiguration": {
+      "dev": {
+        "consPlanSku": "dynamic",
+        "consPlanCompute": "dynamic",
+        "eventHubCapacity": "1"
+      },
+      "stg": {
+        "consPlanSku": "dynamic",
+        "consPlanCompute": "dynamic",
+        "eventHubCapacity": "1"
+      },
+      "prd": {
+        "consPlanSku": "dynamic",
+        "consPlanCompute": "dynamic",
+        "eventHubCapacity": "1"
+      }
+    },
+    "currentConfiguration": "[variables('appSvcConfiguration')[parameters('environment')]]"
+  },
+  "resources": [
+    {
+      "comments": "Application Insights",
+      "type": "Microsoft.Insights/components",
+      "kind": "other",
+      "name": "[variables('appInsightsName')]",
+      "apiVersion": "2015-05-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {},
+      "scale": null,
+      "properties": {
+        "Application_Type": "other"
+      },
+      "dependsOn": []
+    },
+    {
+      "comments": "Consumption Plan for PositionEnricher function.",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2015-04-01",
+      "name": "[variables('positionEnricherHostingPlanName')]",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+        "displayName": "Consumption plan"
+      },
+      "properties": {
+        "name": "[variables('positionEnricherHostingPlanName')]",
+        "computeMode": "[variables('currentConfiguration')['consPlanCompute']]",
+        "sku": "[variables('currentConfiguration')['consPlanSku']]"
+      }
+    },
+    {
+      "comments": "Storage account for the Position Enricher Function.",
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "name": "[variables('positionEnricherStorageAccountName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+        "displayName": "Position Enricher Storage Account"
+      },
+      "scale": null,
+      "properties": {
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "virtualNetworkRules": [],
+          "ipRules": [],
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": false,
+        "encryption": {
+          "services": {
+            "file": {
+              "enabled": true
+            },
+            "blob": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "comments": "GeoTracking PositionEnricher Function App.",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "name": "[variables('positionEnricherFunctionName')]",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "GreenLightsWorker Function"
+      },
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "reserved": false,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('positionEnricherHostingPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+              "value": "1"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('positionEnricherStorageAccountName'),';AccountKey=',listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', variables('positionEnricherStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "sendToTopicName",
+              "value": "events"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(variables('appInsightsName')).InstrumentationKey]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('positionEnricherHostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('positionEnricherStorageAccountName'))]",
+        "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+      ]
+    },
+    {
+      "comments": "Event Hub Namespace",
+      "type": "Microsoft.EventHub/namespaces",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": "[variables('currentConfiguration')['eventHubCapacity']]"
+      },
+      "name": "[variables('geoTrackingEventHubNsName')]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+        "displayName": "GeoTracking EventHub"
+      },
+      "scale": null,
+      "properties": {
+        "isAutoInflateEnabled": true,
+        "maximumThroughputUnits": 20
+      }
+    },
+    {
+      "comments": "Event hub to stored raw ais messages.",
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'))]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+      },
+      "scale": null,
+      "properties": {
+        "messageRetentionInDays": 4,
+        "partitionCount": 4,
+        "status": "Active"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

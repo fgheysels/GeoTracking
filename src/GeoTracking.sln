@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoTracking.PositionEnricher", "GeoTracking.PositionEnricher\GeoTracking.PositionEnricher.csproj", "{12FD44D6-4A36-483D-A0CB-89CDA28FF637}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoTracking.PositionEnricher.Tests", "GeoTracking.PositionEnricher.Tests\GeoTracking.PositionEnricher.Tests.csproj", "{8FF4CAAE-B725-41CB-955A-D79E118783DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoTracking.PositionEnricher.Tests", "GeoTracking.PositionEnricher.Tests\GeoTracking.PositionEnricher.Tests.csproj", "{8FF4CAAE-B725-41CB-955A-D79E118783DE}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "GeoTracking.Resources", "GeoTracking.Resources\GeoTracking.Resources.deployproj", "{AA723590-386E-4DD0-9754-9431B3641A04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8FF4CAAE-B725-41CB-955A-D79E118783DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FF4CAAE-B725-41CB-955A-D79E118783DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FF4CAAE-B725-41CB-955A-D79E118783DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA723590-386E-4DD0-9754-9431B3641A04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA723590-386E-4DD0-9754-9431B3641A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA723590-386E-4DD0-9754-9431B3641A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA723590-386E-4DD0-9754-9431B3641A04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
