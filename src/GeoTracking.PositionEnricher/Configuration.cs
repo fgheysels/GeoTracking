@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GeoTracking.PositionEnricher
 {
-    class Configuration
+   static class Configuration
     {
-        
+        public static string VesselGeoPositionConnectionString()
+        {
+            return Environment.GetEnvironmentVariable("geoPositionEventHubConnection");
+        }
     }
 }
