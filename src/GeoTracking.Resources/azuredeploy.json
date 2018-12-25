@@ -21,6 +21,7 @@
     "positionEnricherFunctionName": "[concat('geotracking-enricher-fx-', parameters('environment'))]", 
     "geoTrackingEventHubNsName": "[concat('geotracking-evh-', parameters('environment'))]",
     "positionReportEventHubName": "[concat('positionreport-', parameters('environment'))]", 
+    "vesselGeoPositionEventHubName": "[concat('vesselgeoposition-', parameters('environment'))]", 
     "appSvcConfiguration": {
       "dev": {
         "consPlanSku": "dynamic",
@@ -148,6 +149,10 @@
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(variables('appInsightsName')).InstrumentationKey]"
+            },
+            {
+              "name": "geoPositionEventHubConnection",
+              "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('geoTrackingEventHubNsName'), variables('vesselGeoPositionEventHubName'), 'SendAccess'), '2017-04-01').primaryConnectionString]"
             }
           ]
         }
@@ -155,7 +160,9 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('positionEnricherHostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts/', variables('positionEnricherStorageAccountName'))]",
-        "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+        "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('geoTrackingEventHubNsName'), variables('vesselGeoPositionEventHubName'), 'SendAccess')]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('geoTrackingEventHubNsName'), variables('positionReportEventHubName'), 'ListenAccess')]"
       ]
     },
     {
@@ -198,9 +205,46 @@
       ]
     },
     {
-      "comments": "Event hub to stored raw ais messages.",
+      "comments": "Generic authorization rule for sending to event hubs.",
+      "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+      "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('vesselGeoPositionEventHubName'), '/SendAccess')]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+      },
+      "scale": null,
+      "properties": {
+        "rights": [
+          "Send"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('geoTrackingEventHubNsName'), variables('vesselGeoPositionEventHubName'))]"
+      ]
+    },
+    {
+      "comments": "Event hub to store raw positionreport messages.",
       "type": "Microsoft.EventHub/namespaces/eventhubs",
       "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'))]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+      },
+      "scale": null,
+      "properties": {
+        "messageRetentionInDays": 4,
+        "partitionCount": 4,
+        "status": "Active"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]"
+      ]
+    },
+    {
+      "comments": "Event hub to store enriched VesselGeoPosition messages.",
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('vesselGeoPositionEventHubName'))]",
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
       "tags": {
