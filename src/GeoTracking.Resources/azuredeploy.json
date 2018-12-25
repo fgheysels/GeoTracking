@@ -138,8 +138,12 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('positionEnricherStorageAccountName'),';AccountKey=',listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', variables('positionEnricherStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "sendToTopicName",
-              "value": "events"
+              "name": "eventHubName",
+              "value": "[variables('geoTrackingEventHubNsName')]"
+            },
+            {
+              "name": "eventHubConnection",
+              "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('geoTrackingEventHubNsName'), variables('positionReportEventHubName'), 'ListenAccess'), '2017-04-01').primaryConnectionString]"
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -173,6 +177,25 @@
         "isAutoInflateEnabled": true,
         "maximumThroughputUnits": 20
       }
+    },
+    {
+      "comments": "Generic authorization rule for listening from event hubs.",
+      "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+      "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'), '/ListenAccess')]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+      },
+      "scale": null,
+      "properties": {
+        "rights": [
+          "Listen"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('geoTrackingEventHubNsName'), variables('positionReportEventHubName'))]"
+      ]
     },
     {
       "comments": "Event hub to stored raw ais messages.",
