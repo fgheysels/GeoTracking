@@ -1,0 +1,20 @@
+config:
+  target: 'http://localhost:7071/api/GeoTrackingFeed'
+  phases:
+    - duration: 60
+      arrivalRate: 20
+  processor: "./generatepositionreports.js"
+  defaults:
+    headers:
+      content-type: 'application/json'
+scenarios:
+  - flow:
+    - function: "generateRandomData"
+    - post:
+        url: "/"
+        json:
+          shipId: "{{ shipId }}"
+          timestamp: "{{ timestamp }}"
+          longitude: "{{ longitude }}"
+          latitude: "{{ latitude }}"
+    - log: "Sent a request for {{ shipId }} with long {{ longitude }} lat {{ latitude }} on {{ timestamp }}"
