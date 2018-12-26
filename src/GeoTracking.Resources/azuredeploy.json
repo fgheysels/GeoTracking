@@ -17,8 +17,11 @@
     "deployLocation": "[resourceGroup().location]",
     "appInsightsName": "[concat('geotracking-ai-', parameters('environment'))]", 
     "positionEnricherHostingPlanName": "[concat('geotracking-enricher-consplan-', parameters('environment'))]",
-    "positionEnricherStorageAccountName": "[concat('enricherstorage', parameters('environment'))]", 
-    "positionEnricherFunctionName": "[concat('geotracking-enricher-fx-', parameters('environment'))]", 
+    "positionEnricherStorageAccountName": "[concat('enricherstorage', parameters('environment'))]",
+    "positionEnricherFunctionName": "[concat('geotracking-enricher-fx-', parameters('environment'))]",
+    "ingestToDbHostingPlanName": "[concat('geotracking-ingestdb-consplan-', parameters('environment'))]",
+    "ingestToDbFunctionName": "[concat('geotracking-ingestdb-fx-', parameters('environment'))]", 
+    "ingestToDbStorageAccountName": "[concat('ingestdbstorage', parameters('environment'))]", 
     "geoTrackingEventHubNsName": "[concat('geotracking-evh-', parameters('environment'))]",
     "positionReportEventHubName": "[concat('positionreport-', parameters('environment'))]", 
     "vesselGeoPositionEventHubName": "[concat('vesselgeoposition-', parameters('environment'))]", 
@@ -117,7 +120,7 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "tags": {
-        "displayName": "GreenLightsWorker Function"
+        "displayName": "Position Enricher Function"
       },
       "scale": null,
       "properties": {
@@ -166,6 +169,111 @@
       ]
     },
     {
+      "comments": "Consumption Plan for IngestDb function.",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2015-04-01",
+      "name": "[variables('ingestToDbHostingPlanName')]",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+        "displayName": "Consumption plan"
+      },
+      "properties": {
+        "name": "[variables('ingestToDbHostingPlanName')]",
+        "computeMode": "[variables('currentConfiguration')['consPlanCompute']]",
+        "sku": "[variables('currentConfiguration')['consPlanSku']]"
+      }
+    },
+    {
+      "comments": "Storage account for the Ingest to DB Function.",
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "name": "[variables('ingestToDbStorageAccountName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+        "displayName": "Ingest To DB Storage Account"
+      },
+      "scale": null,
+      "properties": {
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "virtualNetworkRules": [],
+          "ipRules": [],
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": false,
+        "encryption": {
+          "services": {
+            "file": {
+              "enabled": true
+            },
+            "blob": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "comments": "GeoTracking IngestToDb Function App.",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "name": "[variables('ingestToDbFunctionName')]",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Ingest Positions to DB Function"
+      },
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "reserved": false,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('ingestToDbHostingPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+              "value": "1"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('ingestToDbStorageAccountName'),';AccountKey=',listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', variables('ingestToDbStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "eventHubName",
+              "value": "[variables('geoTrackingEventHubNsName')]"
+            },
+            {
+              "name": "eventHubConnection",
+              "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('geoTrackingEventHubNsName'), variables('vesselGeoPositionEventHubName'), 'ListenAccess'), '2017-04-01').primaryConnectionString]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(variables('appInsightsName')).InstrumentationKey]"
+            }
+
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('ingestToDbHostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('ingestToDbStorageAccountName'))]",
+        "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('geoTrackingEventHubNsName'), variables('vesselGeoPositionEventHubName'), 'ListenAccess')]"
+      ]
+    },
+    {
       "comments": "Event Hub Namespace",
       "type": "Microsoft.EventHub/namespaces",
       "sku": {
@@ -205,6 +313,25 @@
       ]
     },
     {
+      "comments": "Generic authorization rule for listening from event hubs.",
+      "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+      "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'), '/SendAccess')]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+      },
+      "scale": null,
+      "properties": {
+        "rights": [
+          "Send"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('geoTrackingEventHubNsName'), variables('positionReportEventHubName'))]"
+      ]
+    },
+    {
       "comments": "Generic authorization rule for sending to event hubs.",
       "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
       "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('vesselGeoPositionEventHubName'), '/SendAccess')]",
@@ -216,6 +343,25 @@
       "properties": {
         "rights": [
           "Send"
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('geoTrackingEventHubNsName'), variables('vesselGeoPositionEventHubName'))]"
+      ]
+    },
+    {
+      "comments": "Generic authorization rule for sending to event hubs.",
+      "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+      "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('vesselGeoPositionEventHubName'), '/ListenAccess')]",
+      "apiVersion": "2017-04-01",
+      "location": "[variables('deployLocation')]",
+      "tags": {
+      },
+      "scale": null,
+      "properties": {
+        "rights": [
+          "Listen"
         ]
       },
       "dependsOn": [
