@@ -33,6 +33,10 @@ namespace GeoTracking.PositionEnricher
         public PositionSource Source { get; }
 
         public string GeoHash { get; }
+        public string GeoHash_Date
+        {
+            get { return $"{GeoHash}_{Date:yyyyMMdd}"; }
+        }
     }
 
     public enum PositionSource
