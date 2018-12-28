@@ -9,7 +9,7 @@ namespace GeoTracking.PositionEnricher.Tests
         [Fact]
         public void CanProcessEventData()
         {
-            var report = new PositionReport(18, new DateTime(2018, 12, 14, 10, 29, 54), 55.4436546, 3.6985412);
+            var report = new PositionReport(18, "Ais", new DateTime(2018, 12, 14, 10, 29, 54), 55.4436546, 3.6985412);
 
             var processor = new PositionProcessor();
 
