@@ -20,6 +20,7 @@ namespace GeoTracking.PositionEnricher
         {
             _precision = precision;
         }
+
         public string GeoHashCoordinates(double longitude, double latitude)
         {
             return NGeoHash.GeoHash.Encode(latitude, longitude, _precision);
