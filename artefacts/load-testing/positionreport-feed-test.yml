@@ -14,6 +14,7 @@ scenarios:
         url: "/"
         json:
           shipId: "{{ shipId }}"
+          source: "{{ source }}"
           timestamp: "{{ timestamp }}"
           longitude: "{{ longitude }}"
           latitude: "{{ latitude }}"
