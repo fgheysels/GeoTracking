@@ -13,6 +13,7 @@ namespace GeoTracking.PositionEnricher
             ShipId = position.ShipId;
             Position = new Point(new Position(position.Latitude, position.Longitude));
             Timestamp = position.Timestamp;
+            Date = position.Timestamp.Date;
             GeoHash = geoHasher.GeoHashCoordinates(position.Longitude, position.Latitude);
         }
 
@@ -30,6 +31,7 @@ namespace GeoTracking.PositionEnricher
         public long ShipId { get; }
         public Point Position { get; }
         public DateTime Timestamp { get; }
+        public DateTime Date { get; set; }
 
         public string GeoHash { get; }
     }
