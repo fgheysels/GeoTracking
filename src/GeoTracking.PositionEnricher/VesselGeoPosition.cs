@@ -1,5 +1,6 @@
 using System;
 using GeoJSON.Net.Geometry;
+using Newtonsoft.Json;
 
 namespace GeoTracking.PositionEnricher
 {
@@ -26,13 +27,20 @@ namespace GeoTracking.PositionEnricher
             Source = Enum.Parse<PositionSource>(positionSource);
         }
 
+        [JsonProperty("shipId")]
         public long ShipId { get; }
+        [JsonProperty("position")]
         public Point Position { get; }
+        [JsonProperty("timestamp")]
         public DateTime Timestamp { get; }
+        [JsonProperty("date")]
         public DateTime Date { get; }
+        [JsonProperty("source")]
         public PositionSource Source { get; }
 
+        [JsonProperty("geoHash")]
         public string GeoHash { get; }
+        [JsonProperty("geoHash_date")]
         public string GeoHash_Date
         {
             get { return $"{GeoHash}_{Date:yyyyMMdd}"; }
