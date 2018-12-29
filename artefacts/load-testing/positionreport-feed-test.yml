@@ -1,5 +1,5 @@
 config:
-  target: 'http://localhost:7071/api/GeoTrackingFeed'
+  target: "http://geotracking-httpfeed-fx-dev.azurewebsites.net/api/GeoTrackingFeed"
   phases:
     - duration: 60
       arrivalRate: 20
@@ -12,6 +12,8 @@ scenarios:
     - function: "generateRandomData"
     - post:
         url: "/"
+        headers:
+          x-functions-key: "DAsiXVcxqTr8SgCLf2GTvoRgJAb0eXs1HRJe0mnH4AQ4yQd0ONtyCw=="
         json:
           shipId: "{{ shipId }}"
           source: "{{ source }}"
