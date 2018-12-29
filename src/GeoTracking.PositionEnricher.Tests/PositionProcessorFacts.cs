@@ -16,6 +16,7 @@ namespace GeoTracking.PositionEnricher.Tests
             var result = processor.ProcessMessage(report);
 
             Assert.NotNull(result);
+            Assert.Equal(4, result.GeoHash.Length);
             Assert.Equal(report.Longitude, result.Position.Coordinates.Longitude);
             Assert.Equal(report.Latitude, result.Position.Coordinates.Latitude);
         }
