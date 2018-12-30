@@ -25,6 +25,8 @@ namespace GeoTracking.PositionEnricher
             Date = timestamp.Date;
             GeoHash = geoHasher.GeoHashCoordinates(longitude, latitude);
             Source = Enum.Parse<PositionSource>(positionSource);
+
+            CreatedOn = DateTime.Now;
         }
 
         [JsonProperty("shipId")]
@@ -37,6 +39,8 @@ namespace GeoTracking.PositionEnricher
         public DateTime Date { get; }
         [JsonProperty("source")]
         public PositionSource Source { get; }
+        [JsonProperty("createdon")]
+        public DateTime CreatedOn { get; }
 
         [JsonProperty("geoHash")]
         public string GeoHash { get; }
