@@ -13,7 +13,7 @@ namespace GeoTracking.PositionEnricher
     {
         private const string FunctionName = "PositionEnricher";
 
-        private static readonly EventHubClient _ehClient = EventHubClient.CreateFromConnectionString(Configuration.VesselGeoPositionConnectionString());
+        private static readonly EventHubClient EhClient = EventHubClient.CreateFromConnectionString(Configuration.VesselGeoPositionConnectionString());
 
         [FunctionName(FunctionName)]
         public static async Task Run([EventHubTrigger("%eventHubName%", Connection = "eventHubConnection")]EventData[] messages, ILogger log)
@@ -35,7 +35,7 @@ namespace GeoTracking.PositionEnricher
 
                 var result = new EventData(Encoding.UTF8.GetBytes(serialized));
 
-                sendTasks.Add(_ehClient.SendAsync(result));
+                sendTasks.Add(EhClient.SendAsync(result));
             }
 
             await Task.WhenAll(sendTasks);
@@ -46,8 +46,6 @@ namespace GeoTracking.PositionEnricher
     {
         public VesselGeoPosition ProcessMessage(PositionReport positionReport)
         {
-            //  var positionReport = JsonConvert.DeserializeObject<PositionReport>(Encoding.UTF8.GetString(eventData.Body.Array));
-
             return new VesselGeoPosition(positionReport, NGeoHashAlgorithm.Default);
         }
     }

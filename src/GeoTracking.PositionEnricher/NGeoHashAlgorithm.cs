@@ -9,7 +9,7 @@ namespace GeoTracking.PositionEnricher
         /// <summary>
         /// Initializes a new instance of the <see cref="NGeoHashAlgorithm"/> class.
         /// </summary>
-        public NGeoHashAlgorithm() : this(4)
+        public NGeoHashAlgorithm() : this(3)
         {
         }
 
