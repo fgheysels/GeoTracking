@@ -55,7 +55,9 @@
       "name": "[variables('appInsightsName')]",
       "apiVersion": "2015-05-01",
       "location": "[variables('deployLocation')]",
-      "tags": {},
+      "tags": {
+        "displayName": "Application Insights" 
+      },
       "scale": null,
       "properties": {
         "Application_Type": "other"
@@ -174,7 +176,7 @@
       "name": "[variables('positionEnricherHostingPlanName')]",
       "location": "[variables('deployLocation')]",
       "tags": {
-        "displayName": "Consumption plan"
+        "displayName": "Consumption plan for Position Enricher Function"
       },
       "properties": {
         "name": "[variables('positionEnricherHostingPlanName')]",
@@ -283,7 +285,7 @@
       "name": "[variables('ingestToDbHostingPlanName')]",
       "location": "[variables('deployLocation')]",
       "tags": {
-        "displayName": "Consumption plan"
+        "displayName": "Consumption plan for IngestToDb Function"
       },
       "properties": {
         "name": "[variables('ingestToDbHostingPlanName')]",
@@ -407,14 +409,15 @@
       "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'), '/ListenAccess')]",
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
-      "tags": {
-      },
       "scale": null,
       "properties": {
         "rights": [
           "Listen"
         ]
       },
+      "tags": {
+        "displayName": "Listen authorization-rule for PositionReport EventHub" 
+      } ,
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]",
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('geoTrackingEventHubNsName'), variables('positionReportEventHubName'))]"
@@ -426,14 +429,15 @@
       "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'), '/SendAccess')]",
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
-      "tags": {
-      },
       "scale": null,
       "properties": {
         "rights": [
           "Send"
         ]
       },
+      "tags": {
+        "displayName": "Send authorization-rule for PositionReport EventHub" 
+      }, 
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]",
         "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('geoTrackingEventHubNsName'), variables('positionReportEventHubName'))]"
@@ -446,6 +450,7 @@
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
       "tags": {
+        "displayName": "Send authorization-rule for VesselGeoPosition eventhub" 
       },
       "scale": null,
       "properties": {
@@ -465,6 +470,7 @@
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
       "tags": {
+        "displayName": "Listen authorization-rule for VesselGeoPosition eventhub" 
       },
       "scale": null,
       "properties": {
@@ -483,13 +489,14 @@
       "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('positionReportEventHubName'))]",
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
-      "tags": {
-      },
       "scale": null,
       "properties": {
         "messageRetentionInDays": 4,
         "partitionCount": 4,
         "status": "Active"
+      },
+      "tags": {
+        "displayName": "PositionReport EventHub" 
       },
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]"
@@ -501,13 +508,14 @@
       "name": "[concat(variables('geoTrackingEventHubNsName'), '/', variables('vesselGeoPositionEventHubName'))]",
       "apiVersion": "2017-04-01",
       "location": "[variables('deployLocation')]",
-      "tags": {
-      },
       "scale": null,
       "properties": {
         "messageRetentionInDays": 4,
         "partitionCount": 4,
         "status": "Active"
+      },
+      "tags": {
+        "displayName": "VesselGeoPosition EventHub"
       },
       "dependsOn": [
         "[resourceId('Microsoft.EventHub/namespaces', variables('geoTrackingEventHubNsName'))]"
