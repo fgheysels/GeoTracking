@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoTracking.IngestToDb", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoTracking.HttpFeed", "GeoTracking.HttpFeed\GeoTracking.HttpFeed.csproj", "{0B417488-A09E-47D3-9284-AEFE0A39D709}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoTracking.Positions.Api", "GeoTracking.Positions.Api\GeoTracking.Positions.Api.csproj", "{F933E54F-79BD-431C-9F3B-614EA4FBAB2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0B417488-A09E-47D3-9284-AEFE0A39D709}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B417488-A09E-47D3-9284-AEFE0A39D709}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B417488-A09E-47D3-9284-AEFE0A39D709}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F933E54F-79BD-431C-9F3B-614EA4FBAB2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F933E54F-79BD-431C-9F3B-614EA4FBAB2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F933E54F-79BD-431C-9F3B-614EA4FBAB2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F933E54F-79BD-431C-9F3B-614EA4FBAB2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
