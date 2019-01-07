@@ -12,8 +12,8 @@ function generateRandomData(userContext, events, done) {
    
     const shipId = Faker.random.number(2000);
     const timestamp = Faker.date.recent(7);
-    const longitude = Faker.random.number({min: -180, max: 180, precision: 0.000001});
-    const latitude = Faker.random.number({min: -90, max: 90, precision: 0.000001});
+    const longitude = Faker.random.number({min: -37.61, max: -27.68, precision: 0.000001});
+    const latitude = Faker.random.number({min: 50.84, max: 54.67, precision: 0.000001});
     const source = Faker.random.arrayElement(["Ais", "Vms", "Lrit"]);
 
     // add variables to virtual user's context:
