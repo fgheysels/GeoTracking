@@ -47,6 +47,7 @@ namespace GeoTracking.PositionEnricher
         [JsonProperty("geoHash_date")]
         public string GeoHash_Date
         {
+            // This property is used as the partition-key in the CosmosDB collection.
             get { return $"{GeoHash}_{Date:yyyyMMdd}"; }
         }
     }
