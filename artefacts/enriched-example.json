@@ -1,1 +1,16 @@
-{"shipId":872,"position":{"type":"Point","coordinates":[-31.918643,50.983059999999995]},"timestamp":"2018-12-31T13:13:32.756Z","date":"2018-12-31T00:00:00Z","source":2,"createdon":"2019-01-07T10:31:12.66874+00:00","geoHash":"g31","geoHash_date":"g31_20181231"}
+{
+    "id": 872,
+    "position": {
+        "type": "Point",
+        "coordinates": [
+            -31.918643,
+            50.983059999999995
+        ]
+    },
+    "timestamp": "2018-12-31T13:13:32.756Z",
+    "date": "2018-12-31T00:00:00Z",
+    "source": 2,
+    "createdon": "2019-01-07T10:31:12.66874+00:00",
+    "geoHash": "g31",
+    "geoHash_date": "g31_20181231"
+}
