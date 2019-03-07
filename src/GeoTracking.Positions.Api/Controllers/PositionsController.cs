@@ -33,6 +33,7 @@ namespace GeoTracking.Positions.Api.Controllers
             // The cosmos-db query will be created using the current culture settings.  
             // When querying on a double, the decimal point could otherwise be a comma instead of a point
             // which would lead to syntax-errors.
+            // (see https://github.com/Azure/azure-cosmos-dotnet-v2/issues/651 )
             System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             var searchKeys = CalculateSearchKeys(request);
