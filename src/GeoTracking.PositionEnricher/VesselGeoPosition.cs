@@ -53,8 +53,7 @@ namespace GeoTracking.PositionEnricher
 
     public enum PositionSource
     {
-        Ais,
-        Lrit,
-        Vms
+        Gps,
+        Sattelite
     }
 }

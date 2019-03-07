@@ -1,5 +1,5 @@
 config:
-  target: "http://geotracking-httpfeed-fx-dev.azurewebsites.net/api/GeoTrackingFeed"
+  target: "{{ $processEnvironment.geotracking_http_url }}"
   phases:
     - duration: 60
       arrivalRate: 20
