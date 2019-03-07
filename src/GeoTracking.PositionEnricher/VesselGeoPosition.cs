@@ -9,8 +9,8 @@ namespace GeoTracking.PositionEnricher
         /// <summary>
         /// Initializes a new instance of the <see cref="VesselGeoPosition"/> class.
         /// </summary>
-        public VesselGeoPosition(PositionReport position, IGeoHashAlgorithm geoHasher) 
-        : this(position.ShipId, position.Source, position.Longitude, position.Latitude, position.Timestamp, geoHasher)
+        public VesselGeoPosition(PositionReport position, IGeoHashAlgorithm geoHasher)
+            : this(position.ShipId, position.Source, position.Longitude, position.Latitude, position.Timestamp, geoHasher)
         {
         }
 
@@ -44,12 +44,11 @@ namespace GeoTracking.PositionEnricher
 
         [JsonProperty("geoHash")]
         public string GeoHash { get; }
+
+        // The GeoHash_Date property holds the value that is used as the partition-key
+        // in cosmosDb
         [JsonProperty("geoHash_date")]
-        public string GeoHash_Date
-        {
-            // This property is used as the partition-key in the CosmosDB collection.
-            get { return $"{GeoHash}_{Date:yyyyMMdd}"; }
-        }
+        public string GeoHash_Date => $"{GeoHash}_{Date:yyyyMMdd}";
     }
 
     public enum PositionSource

@@ -16,7 +16,7 @@ namespace GeoTracking.Positions.Api.Controllers
     {
         private static readonly DocumentClient DbClient;
 
-        private static readonly Uri TracksGeoCollectionUri = UriFactory.CreateDocumentCollectionUri("tracks", "tracks_geohash");
+        private static readonly Uri TracksGeoCollectionUri = UriFactory.CreateDocumentCollectionUri("tracks", "tracks_geohash_new");
 
         static PositionsController()
         {
