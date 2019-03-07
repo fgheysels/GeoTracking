@@ -41,7 +41,7 @@ namespace GeoTracking.HttpFeed
 
     public class PositionReport
     {
-        public long ShipId { get; set; }
+        public long ObjectId { get; set; }
         public string Source { get; set; }
         public DateTime Timestamp { get; set; }
         public double Longitude { get; set; }

@@ -16,7 +16,7 @@ namespace GeoTracking.IngestToDb
         [FunctionName("IngestToCosmosDb")]
         public static async Task Run([EventHubTrigger("%eventHubName%", Connection = "eventHubConnection")]EventData[] messages, ILogger log)
         {
-            var shipIdCollectionUri = UriFactory.CreateDocumentCollectionUri("tracks", "tracks_shipid_new");
+            var objectIdCollectionUri = UriFactory.CreateDocumentCollectionUri("tracks", "tracks_shipid_new");
             var geohashCollectionUri = UriFactory.CreateDocumentCollectionUri("tracks", "tracks_geohash_new");
 
             var tasks = new List<Task<ResourceResponse<Document>>>();
@@ -27,7 +27,7 @@ namespace GeoTracking.IngestToDb
 
                 object position = JsonConvert.DeserializeObject(document);
 
-                tasks.Add(Client.CreateDocumentAsync(shipIdCollectionUri, position));
+                tasks.Add(Client.CreateDocumentAsync(objectIdCollectionUri, position));
                 tasks.Add(Client.CreateDocumentAsync(geohashCollectionUri, position));
             }
 

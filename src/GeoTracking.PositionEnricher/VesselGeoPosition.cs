@@ -10,16 +10,16 @@ namespace GeoTracking.PositionEnricher
         /// Initializes a new instance of the <see cref="VesselGeoPosition"/> class.
         /// </summary>
         public VesselGeoPosition(PositionReport position, IGeoHashAlgorithm geoHasher)
-            : this(position.ShipId, position.Source, position.Longitude, position.Latitude, position.Timestamp, geoHasher)
+            : this(position.ObjectId, position.Source, position.Longitude, position.Latitude, position.Timestamp, geoHasher)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VesselGeoPosition"/> class.
         /// </summary>
-        public VesselGeoPosition(long shipId, string positionSource, double longitude, double latitude, DateTime timestamp, IGeoHashAlgorithm geoHasher)
+        public VesselGeoPosition(long objectId, string positionSource, double longitude, double latitude, DateTime timestamp, IGeoHashAlgorithm geoHasher)
         {
-            ShipId = shipId;
+            ObjectId = objectId;
             Position = new Point(new Position(latitude, longitude));
             Timestamp = timestamp;
             Date = timestamp.Date;
@@ -29,8 +29,8 @@ namespace GeoTracking.PositionEnricher
             CreatedOn = DateTime.Now;
         }
 
-        [JsonProperty("shipId")]
-        public long ShipId { get; }
+        [JsonProperty("objectId")]
+        public long ObjectId { get; }
         [JsonProperty("position")]
         public Point Position { get; }
         [JsonProperty("timestamp")]

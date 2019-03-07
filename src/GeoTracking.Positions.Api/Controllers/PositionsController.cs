@@ -68,17 +68,17 @@ namespace GeoTracking.Positions.Api.Controllers
 
             foreach (var kvp in searchResults)
             {
-                if (groupedByVesselId.ContainsKey(kvp.ShipId) == false)
+                if (groupedByVesselId.ContainsKey(kvp.ObjectId) == false)
                 {
-                    groupedByVesselId.Add(kvp.ShipId, new List<VesselGeoPosition>());
+                    groupedByVesselId.Add(kvp.ObjectId, new List<VesselGeoPosition>());
                 }
 
-                groupedByVesselId[kvp.ShipId].Add(kvp);
+                groupedByVesselId[kvp.ObjectId].Add(kvp);
             }
 
             return Ok(groupedByVesselId.Select(kvp => new TrackResult
             {
-                ShipId = kvp.Key,
+                ObjectId = kvp.Key,
                 Positions = kvp.Value.Select(p => new Position() {Location = p.Position, Timestamp = p.Timestamp})
             }).ToArray());
         }
@@ -101,7 +101,7 @@ namespace GeoTracking.Positions.Api.Controllers
 
     public class TrackResult
     {
-        public long ShipId { get; set; }
+        public long ObjectId { get; set; }
         public IEnumerable<Position> Positions
         {
             get;
@@ -117,8 +117,8 @@ namespace GeoTracking.Positions.Api.Controllers
 
     public class VesselGeoPosition
     {
-        [JsonProperty("shipId")]
-        public long ShipId { get; set; }
+        [JsonProperty("ObjectId")]
+        public long ObjectId { get; set; }
         [JsonProperty("position")]
         public Point Position { get; set; }
         [JsonProperty("timestamp")]
