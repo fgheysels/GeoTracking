@@ -13,7 +13,7 @@ scenarios:
     - post:
         url: "/"
         headers:
-          x-functions-key: "DAsiXVcxqTr8SgCLf2GTvoRgJAb0eXs1HRJe0mnH4AQ4yQd0ONtyCw=="
+          x-functions-key: "{{ $processEnvironment.geotracking_http_key }}"
         json:
           shipId: "{{ shipId }}"
           source: "{{ source }}"
