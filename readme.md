@@ -8,6 +8,10 @@ The scenario is that there are different objects that are transmitting their pos
 
 ## Project setup
 
+Schematic:
+
+![project_schema](./img/project_schematic.PNG)
+
 Suppose that position-report data is transmitted via different sources (GPS, sattelite).  The data is sent to an HTTP endpoint which puts the position reports on an Azure EventHub.
 
 The position reports are JSON documents that look like this:
