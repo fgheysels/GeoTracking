@@ -60,7 +60,7 @@ The documents are saved in two CosmosDB collections:
 
 ## Testing
 
-The Artillery tool is used to send test data to the HTTP ingestion endpoint.
+The [Artillery](https://artillery.io/) tool is used to send test data to the HTTP ingestion endpoint.
 A yaml file can be found in `.\artefacts\load-testing` that describes a scenario where a number of generated position-reports are being sent to a target endpoint.
 
 The testdata is being generated using [Faker.js](https://github.com/marak/Faker.js/)
